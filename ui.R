@@ -18,7 +18,7 @@ ui <- shinyUI(
       
         #uiOutput("table_summary"),
         #uiOutput('tables'),
-        fluidRow(uiOutput('num_buttons_1'),uiOutput('num_buttons_2')),
+        fluidRow(column(width=4,uiOutput('num_buttons_1'),uiOutput('num_buttons_2')),column(width=4,uiOutput('factor_button'),uiOutput('numeric_input'))),
         uiOutput("plots_first_row"),
         uiOutput('plots_second_row'),
         width=12
