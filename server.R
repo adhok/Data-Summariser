@@ -168,12 +168,23 @@ server <- function(input, output, session) {
     output$scatter <- renderPlot({
       
       data_output <- read.csv(text=input$mydata[[name]])
-      nums <- sapply(data_output, is.numeric)
-      data_nums <- data_output[,nums]
+      
+      data_nums <- data_output
       # nums_names <- names(nums)
       title_text <- paste("Relationship between",input$numerical_input_1,'and',input$numerical_input_2)
-      p <- ggplot(data=data_nums,aes(x=data_nums[,input$numerical_input_1],y=data_nums[,input$numerical_input_2]))+
-        geom_point()+labs(title=title_text,x=input$numerical_input_1,y=input$numerical_input_2)
+      if(input$grouped_ungrouped=='ungrouped'){
+        p <- ggplot(data=data_nums,aes(x=data_nums[,input$numerical_input_1],y=data_nums[,input$numerical_input_2]))+
+          geom_point()+labs(title=title_text,x=input$numerical_input_1,y=input$numerical_input_2)
+        
+      }else{
+        #data_nums <- data_nums %>% group_by_(input$factor_input_for_ring) %>% summarise(n=)
+        p <- ggplot(data=data_nums,aes(x=data_nums[,input$numerical_input_1],y=data_nums[,input$numerical_input_2],
+                                       color=as.factor(data_nums[,input$factor_input])))+
+          geom_point()+labs(title=title_text,x=input$numerical_input_1,y=input$numerical_input_2)+
+          guides(fill=guide_legend(title=input$factor_input))
+        
+      }
+      
       show(id="loading", anim = TRUE, animType = "fade",'Graphs are loading...')
       Sys.sleep(1.5)
       
@@ -183,18 +194,45 @@ server <- function(input, output, session) {
       
       
     })
-    
-    output$ring_chart <- renderPlot({
+    output$grouped_ungrouped <- renderUI({
+      
+      
+      radioButtons(inputId = 'grouped_ungrouped',label="Grouped/Ungrouped",choices=c('Grouped'='grouped',
+                                                                                     'Ungrouped'='ungrouped'),selected = 'ungrouped')
+      
+      
+      
+    })
+    output$factor_button_for_ring_chart <- renderUI({
       
       data_output <- read.csv(text=input$mydata[[name]])
       factor_variables <- sapply(data_output,is.factor)
       factor_variables  <- names(factor_variables[factor_variables==TRUE])
-      # data_output %>% 
-      #   group_by_(factor_variables[1]) %>%
-      #   summarise(n=n()) %>%
-      #   mutate(n=n/sum(n)) %>% 
-      #   rename_('Group'=factor_variables[1]) %>%
-      #   ggplot(aes(x=Group,y=n))
+      selectInput('factor_input_for_ring',label="Input Variable",selected = factor_variables[1],choices=factor_variables)
+      
+    })
+    
+    output$ring_chart <- renderPlot({
+      
+      data_output <- read.csv(text=input$mydata[[name]])
+      
+      
+      dat <- data_output %>% group_by_(input$factor_input_for_ring) %>% summarise(n=n()) %>% mutate(n=n/sum(n))
+      dat$fraction = dat$n / sum(dat$n)
+      dat = dat[order(dat$n), ]
+      dat$ymax = cumsum(dat$n)
+      dat$ymin = c(0, head(dat$ymax, n=-1))
+      dat <- as.data.frame(dat)
+      ggplot(dat, aes(fill=as.factor(dat[,input$factor_input_for_ring]), ymax=ymax, ymin=ymin, xmax=nrow(dat)+1, xmin=nrow(dat))) +
+        geom_rect() +
+        coord_polar(theta="y") +
+        xlim(c(0, 4)) +
+        labs(title=paste('Proportions of',input$factor_input_for_ring))+theme(axis.text.y = element_blank(),
+                                            axis.text.x = element_blank(),
+                                            panel.background = element_blank(),plot.title = element_text(hjust=0.4),
+                                            axis.ticks = element_blank(),legend.position = 'none')+guides(fill=guide_legend(title=input$factor_input_for_ring))
+      
+      
       
       
     })
@@ -218,4 +256,21 @@ server <- function(input, output, session) {
       output[[name]] <- renderTable(head(read.csv(text=input$mydata[[name]]),4))
     }
   })
+  
 }
+
+# dat <- iris%>% group_by(Species) %>% summarise(n=n()) %>% mutate(n=n/sum(n))
+# dat$fraction = dat$n / sum(dat$n)
+# dat = dat[order(dat$n), ]
+# dat$ymax = cumsum(dat$n)
+# dat$ymin = c(0, head(dat$ymax, n=-1))
+# 
+# p1 = ggplot(dat, aes(fill=Species, ymax=ymax, ymin=ymin,xmin=nrow(dat),xmax=nrow(dat)+1)) +
+#   geom_rect() +
+#   coord_polar(theta="y") +
+#   xlim(c(0, 4)) +
+#   labs(title="Basic ring plot")+theme(axis.text.y = element_blank(),
+#                                       axis.text.x = element_blank(),
+#                                       panel.background = element_blank(),plot.title = element_text(hjust=0.4),
+#                                       axis.ticks = element_blank())
+#   
