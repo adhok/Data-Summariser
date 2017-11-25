@@ -1,6 +1,7 @@
 library(ggplot2)
 library(lazyeval)
 library(tidyverse)
+library(plotly)
 #options(error = 999)
 appCSS <- "
 #loading {
@@ -58,6 +59,9 @@ server <- function(input, output, session) {
   
   observeEvent(input$mydata, {
     show("app-content")
+    
+    
+  
     
     len = length(input$mydata)
     output$tables <- renderUI({
@@ -137,6 +141,9 @@ server <- function(input, output, session) {
     output$grouped_plots <- renderPlot({
       
       data_output <-read.csv(text=input$mydata[[name]])
+      
+      validate(
+        need(input$factor_input_for_ring!='', "Ooops...This data set does not have a factor variable."))
       data_group <- group_function(data_output,input$factor_input,input$numeric_input)
       
       
@@ -171,17 +178,24 @@ server <- function(input, output, session) {
       
       data_nums <- data_output
       # nums_names <- names(nums)
+      
+      
+      
+      
       title_text <- paste("Relationship between",input$numerical_input_1,'and',input$numerical_input_2)
       if(input$grouped_ungrouped=='ungrouped'){
         p <- ggplot(data=data_nums,aes(x=data_nums[,input$numerical_input_1],y=data_nums[,input$numerical_input_2]))+
           geom_point()+labs(title=title_text,x=input$numerical_input_1,y=input$numerical_input_2)
         
       }else{
+        
+        validate(
+          need(input$factor_input_for_ring!='', "Ooops...This data set does not have a factor variable."))
         #data_nums <- data_nums %>% group_by_(input$factor_input_for_ring) %>% summarise(n=)
         p <- ggplot(data=data_nums,aes(x=data_nums[,input$numerical_input_1],y=data_nums[,input$numerical_input_2],
                                        color=as.factor(data_nums[,input$factor_input])))+
           geom_point()+labs(title=title_text,x=input$numerical_input_1,y=input$numerical_input_2)+
-          guides(fill=guide_legend(title=input$factor_input))
+          guides(fill=guide_legend(title=input$factor_input))+theme(legend.position = 'none')
         
       }
       
@@ -212,27 +226,37 @@ server <- function(input, output, session) {
       
     })
     
-    output$ring_chart <- renderPlot({
+    output$ring_chart <- renderPlotly({
       
       data_output <- read.csv(text=input$mydata[[name]])
+      validate(
+        need(input$factor_input_for_ring!='', "Ooops...This data set does not have a factor variable."))
       
       
-      dat <- data_output %>% group_by_(input$factor_input_for_ring) %>% summarise(n=n()) %>% mutate(n=n/sum(n))
-      dat$fraction = dat$n / sum(dat$n)
-      dat = dat[order(dat$n), ]
-      dat$ymax = cumsum(dat$n)
-      dat$ymin = c(0, head(dat$ymax, n=-1))
-      dat <- as.data.frame(dat)
-      ggplot(dat, aes(fill=as.factor(dat[,input$factor_input_for_ring]), ymax=ymax, ymin=ymin, xmax=nrow(dat)+1, xmin=nrow(dat))) +
-        geom_rect() +
-        coord_polar(theta="y") +
-        xlim(c(0, 4)) +
-        labs(title=paste('Proportions of',input$factor_input_for_ring))+theme(axis.text.y = element_blank(),
-                                            axis.text.x = element_blank(),
-                                            panel.background = element_blank(),plot.title = element_text(hjust=0.4),
-                                            axis.ticks = element_blank(),legend.position = 'none')+guides(fill=guide_legend(title=input$factor_input_for_ring))
+        
+        dat <- data_output %>% group_by_(input$factor_input_for_ring) %>% summarise(n=n()) %>% mutate(n=n/sum(n))
+        p <- dat %>%
+          group_by_(input$factor_input_for_ring) %>%
+          summarize(count = n()) %>%
+          rename_('group'=input$factor_input_for_ring) %>%
+          plot_ly(labels = ~group, values = ~count) %>%
+          add_pie(hole = 0.6) %>%
+          layout(title = paste('Proportions of',input$factor_input_for_ring),  showlegend = FALSE,
+                 xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                 yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)) %>%
+          config(displayModeBar=FALSE,sendData=FALSE,displaylogo=FALSE)
+        
+        p
+        
+        
       
       
+      
+      
+
+      
+        
+        
       
       
     })
@@ -242,15 +266,33 @@ server <- function(input, output, session) {
       
       
       fluidRow(
-         column(width=4,plotOutput('scatter')),
-         column(width=4,plotOutput('grouped_plots')),
-         column(width=4,plotOutput('ring_chart'))
+        
+        HTML("<br>"),
+        HTML("<br>"),
+        HTML("<h3>Scatter Plots</h3>"),
+         plotOutput('scatter'),
+         
+         HTML("<br>"),
+         HTML("<br>"),
+        HTML("<h3>Bar Plots</h3>"),
+        
+         
+         plotOutput('grouped_plots'),
+         HTML("<br>"),
+         HTML("<br>"),
+        HTML("<h3>Ring Plots</h3>"),
+        
+         plotlyOutput('ring_chart'),
+         HTML("<br>"),
+         HTML("<br>"),
+         HTML('<button onclick="topFunction()" id="myBtn" title="Go to top">Go Back To The Top</button>')
         
       )
       
       
       
     })
+    
     
     for (name in names(input$mydata)) {
       output[[name]] <- renderTable(head(read.csv(text=input$mydata[[name]]),4))
@@ -274,3 +316,16 @@ server <- function(input, output, session) {
 #                                       panel.background = element_blank(),plot.title = element_text(hjust=0.4),
 #                                       axis.ticks = element_blank())
 #   
+
+
+
+
+
+
+
+
+
+
+
+
+

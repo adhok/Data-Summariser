@@ -31,16 +31,18 @@ animation: spin 2s linear infinite;
 
 jsfile <- "getdata.js"
 cssfile <- "style.css"
+js_scroll_file <-'scroll.js'
 ui <- shinyUI(
   fluidPage(
     
     tags$head(tags$link(rel="stylesheet", href=cssfile, type="text/css"),
-              tags$script(src=jsfile)),
+              tags$script(src=jsfile),
+              tags$script(src=js_scroll_file)),
     sidebarLayout(
       
       sidebarPanel(
         fluidRow(
-          h5("Drop Datasets"),
+          h5("Drop Datasets in the box below"),
           div(class="col-xs-12", id="drop-area", ondragover="dragOver(event)", 
               ondrop="dropData(event)")),width=2
         
@@ -52,18 +54,26 @@ ui <- shinyUI(
        
         hidden(div(id='loading')),
       
-          hidden(div(
+          hidden(div(style="width=1000px",
             id='app-content',
             
-        #uiOutput("table_summary"),
-        #uiOutput('tables'),
-        fluidRow(column(width=4,uiOutput('num_buttons_1'),uiOutput('num_buttons_2'),uiOutput('grouped_ungrouped')),column(width=4,uiOutput('factor_button'),
+        fluidRow(uiOutput("table_summary")),
+        uiOutput('tables'),
+        
+        fluidRow(column(width=4,uiOutput('num_buttons_1'),uiOutput('num_buttons_2'),uiOutput('grouped_ungrouped')),
+        
+        
+        column(width=4,uiOutput('factor_button'),
                                                                                             uiOutput('numeric_input'),
                                                                                             uiOutput('output_type')
-                                                                                            ),column(width=4,uiOutput('factor_button_for_ring_chart'))),
-        uiOutput("plots_first_row"),
-        uiOutput('plots_second_row'),
-        width=12
+                                                                                            ),
+        column(width=4,uiOutput('factor_button_for_ring_chart'))),
+        
+        
+        
+        
+       uiOutput("plots_first_row")
+        #uiOutput('plots_second_row')
         
       )
           )
