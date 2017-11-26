@@ -73,7 +73,7 @@ server <- function(input, output, session) {
     })
     output$table_summary <- renderUI({
       
-      h6("Table Summary")
+      h3("Table Summary")
     })
     output$num_buttons_1 <- renderUI({
       data_output <- read.csv(text=input$mydata[[name]])
