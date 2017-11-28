@@ -44,15 +44,16 @@ plotTheme <- function(base_size = 12) {
     panel.grid.minor = element_blank(),
     strip.background = element_rect(fill = "grey80", color = "white"),
     strip.text = element_text(size=8),
-    axis.title = element_text(size=5),
-    axis.text = element_text(size=5),
-    axis.title.x = element_text(hjust=1,size=10),
-    axis.title.y = element_text(hjust=1,size=10),
+    axis.title = element_text(size=15),
+    axis.text = element_text(size=15),
+    axis.title.x = element_text(hjust=1,size=15),
+    axis.title.y = element_text(hjust=1,size=15),
     plot.background = element_blank(),
     legend.background = element_blank(),
     legend.title = element_text(colour = "black", face = "bold"),
     legend.text = element_text(colour = "black", face = "bold"),
-    axis.text.x = element_text(vjust=-1,angle=90,size=10))
+    axis.text.y = element_text(size=15),
+    axis.text.x = element_text(vjust=-1,angle=90,size=15))
 }
 server <- function(input, output, session) {
   
@@ -301,21 +302,7 @@ server <- function(input, output, session) {
   
 }
 
-# dat <- iris%>% group_by(Species) %>% summarise(n=n()) %>% mutate(n=n/sum(n))
-# dat$fraction = dat$n / sum(dat$n)
-# dat = dat[order(dat$n), ]
-# dat$ymax = cumsum(dat$n)
-# dat$ymin = c(0, head(dat$ymax, n=-1))
-# 
-# p1 = ggplot(dat, aes(fill=Species, ymax=ymax, ymin=ymin,xmin=nrow(dat),xmax=nrow(dat)+1)) +
-#   geom_rect() +
-#   coord_polar(theta="y") +
-#   xlim(c(0, 4)) +
-#   labs(title="Basic ring plot")+theme(axis.text.y = element_blank(),
-#                                       axis.text.x = element_blank(),
-#                                       panel.background = element_blank(),plot.title = element_text(hjust=0.4),
-#                                       axis.ticks = element_blank())
-#   
+
 
 
 

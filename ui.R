@@ -57,17 +57,18 @@ ui <- shinyUI(
           hidden(div(style="width=1000px",
             id='app-content',
             
+            HTML('<h1> Welcome to the Data Summarizer </h1>'),
         fluidRow(uiOutput("table_summary")),
         uiOutput('tables'),
         
-        fluidRow(column(width=4,uiOutput('num_buttons_1'),uiOutput('num_buttons_2'),uiOutput('grouped_ungrouped')),
+        fluidRow(column(width=4,HTML("<h3>Scatter Plot</h3>"),uiOutput('num_buttons_1'),uiOutput('num_buttons_2'),uiOutput('grouped_ungrouped')),
         
         
-        column(width=4,uiOutput('factor_button'),
+        column(width=4,HTML('<h3>Bar Plot</h3>'),uiOutput('factor_button'),
                                                                                             uiOutput('numeric_input'),
                                                                                             uiOutput('output_type')
                                                                                             ),
-        column(width=4,uiOutput('factor_button_for_ring_chart'))),
+        column(width=4,HTML('<h3>Ring Plots</h3>'),uiOutput('factor_button_for_ring_chart'))),
         
         
         
