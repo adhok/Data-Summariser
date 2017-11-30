@@ -2,8 +2,10 @@
     text-align:center;
     font-size:12px;
 }
+
+
 body {
-border: 10px solid #454545;
+border: 5px solid #454545;
 }
 /* based on CODEPEN entry by Steve Calamia */
 /* It can be found here https://codepen.io/metagrapher/pen/tgcLl*/

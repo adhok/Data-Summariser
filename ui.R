@@ -50,6 +50,7 @@ ui <- shinyUI(
       mainPanel(
         useShinyjs(),
         inlineCSS(appCSS),
+        shinyjs::extendShinyjs(text = "shinyjs.refresh = function() { location.reload(); }"),
         
        
         hidden(div(id='loading')),
@@ -57,14 +58,14 @@ ui <- shinyUI(
           hidden(div(style="width=1000px",
             id='app-content',
             
-            HTML('<h1> Welcome to the Data Summarizer </h1>'),
+          fluidRow(HTML('<h1> Welcome to the Data Summarizer </h1>'),actionButton("refresh", "Refresh to enter new data")),
         fluidRow(uiOutput("table_summary")),
         uiOutput('tables'),
         
         fluidRow(column(width=4,HTML("<h3>Scatter Plot</h3>"),uiOutput('num_buttons_1'),uiOutput('num_buttons_2'),uiOutput('grouped_ungrouped')),
         
         
-        column(width=4,HTML('<h3>Bar Plot</h3>'),uiOutput('factor_button'),
+        column(width=4,HTML('<h3>Bar and Box Plots</h3>'),uiOutput('factor_button'),
                                                                                             uiOutput('numeric_input'),
                                                                                             uiOutput('output_type')
                                                                                             ),

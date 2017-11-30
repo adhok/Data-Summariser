@@ -71,11 +71,22 @@ server <- function(input, output, session) {
         tableOutput(tableName)
       })
       do.call(tagList, table_list)
+      #data_output <- read.csv(text=input$mydata[[name]])
+      #tableOutput(head(data_output))
     })
     output$table_summary <- renderUI({
       
       h3("Table Summary")
     })
+    observeEvent(input$refresh, {
+      
+      show(id="loading", anim = TRUE, animType = "fade")
+      Sys.sleep(1.5)
+      
+      hide(id = "loading", anim = TRUE, animType = "fade") 
+      shinyjs::js$refresh()
+    })
+    
     output$num_buttons_1 <- renderUI({
       data_output <- read.csv(text=input$mydata[[name]])
       nums <- sapply(data_output, is.numeric)
@@ -261,6 +272,17 @@ server <- function(input, output, session) {
       
       
     })
+    output$bar_and_box_plot_header <- renderUI({
+      
+      if(input$aggregate_method=="dist"){
+        
+        HTML('<h3> Box Plots </h3>')
+      }
+      else{
+        HTML('<h3> Bar Plots </h3>')
+      }
+      
+    })
     output$plots_first_row <- renderUI({
       
       
@@ -275,7 +297,7 @@ server <- function(input, output, session) {
          
          HTML("<br>"),
          HTML("<br>"),
-        HTML("<h3>Bar Plots</h3>"),
+        uiOutput('bar_and_box_plot_header'),
         
          
          plotOutput('grouped_plots'),
