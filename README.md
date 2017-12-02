@@ -8,7 +8,14 @@ A shiny app to drag and drop csv files to get fast data summaries of the data se
 # Motivation
 
 This tool helps to look at a dataset visually without running any code. This *might* help in
-reducing the time needed to understand the data. One *drawback* of this is that, it only works with *.csv* files at the moment.
+reducing the time needed to understand the data. One **drawback** of this is that, it only works with *.csv* files at the moment. This tool borrows the idea from
+this [Stackoverflow Question](https://stackoverflow.com/questions/36108705/drag-and-drop-data-into-shiny-app).
+
+# Demo
+## Iris Dataset
+For a simple demonstration, let us use the `test.csv` file which has the Iris Flower data set.This data set was created using the `iris` in-built dataset in R.
+
+
 
 
 
