@@ -2,6 +2,7 @@ library(ggplot2)
 library(lazyeval)
 library(tidyverse)
 library(plotly)
+library(V8)
 #options(error = 999)
 appCSS <- "
 #loading {
