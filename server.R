@@ -151,7 +151,7 @@ server <- function(input, output, session) {
       
       
     }
-    output$grouped_plots <- renderPlot({
+    output$grouped_plots <- renderPlotly({
       
       data_output <-read.csv(text=input$mydata[[name]])
       
@@ -178,14 +178,14 @@ server <- function(input, output, session) {
       
       hide(id = "loading", anim = TRUE, animType = "fade") 
      
-      print(p+plotTheme())
+      ggplotly(p+plotTheme())
         
       
       
     })
     
     
-    output$scatter <- renderPlot({
+    output$scatter <- renderPlotly({
       
       data_output <- read.csv(text=input$mydata[[name]])
       
@@ -216,7 +216,7 @@ server <- function(input, output, session) {
       Sys.sleep(1.5)
       
       hide(id = "loading", anim = TRUE, animType = "fade",'Graphs are loading...') 
-      tryCatch(print(p+plotTheme()))
+      tryCatch(ggplotly(p+plotTheme()))
       
       
       
@@ -294,14 +294,14 @@ server <- function(input, output, session) {
         HTML("<br>"),
         HTML("<br>"),
         HTML("<h3>Scatter Plots</h3>"),
-         plotOutput('scatter'),
+         plotlyOutput('scatter'),
          
          HTML("<br>"),
          HTML("<br>"),
         uiOutput('bar_and_box_plot_header'),
         
          
-         plotOutput('grouped_plots'),
+         plotlyOutput('grouped_plots'),
          HTML("<br>"),
          HTML("<br>"),
         HTML("<h3>Ring Plots</h3>"),

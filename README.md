@@ -20,3 +20,11 @@ For a simple demonstration, let us use the `test.csv` file which has the Iris Fl
 
 
 
+### mtcars Data Set
+
+![](https://raw.githubusercontent.com/adhok/Data-Summariser/master/mtcars.gif)
+
+
+### Boston Housing Data
+
+![](https://raw.githubusercontent.com/adhok/Data-Summariser/master/boston.gif)
